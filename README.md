@@ -2,6 +2,8 @@
 
 This project provides a simple bash script to download and format transcripts from YouTube videos.
 
+Credit to this thread on Reddit for the idea: <https://www.reddit.com/r/youtubedl/comments/15fcrmd/transcript_extract_from_youtube_videos_ytdlp/>
+
 ## Features
 
 - Downloads subtitles from a specified YouTube video
