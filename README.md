@@ -16,6 +16,14 @@ Before you begin, ensure you have the following installed:
 - yt-dlp
 - sed
 
+## Install yt-dlp
+yt-dlp is a command-line tool to download videos from YouTube and other video platforms.
+### Install yt-dlp on Ubuntu/Debian:
+```bash
+sudo apt-get update
+sudo apt-get install yt-dlp
+```
+
 ## Usage
 
 1. Clone this repository:
