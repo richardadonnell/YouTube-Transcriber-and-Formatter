@@ -1,17 +1,33 @@
 #!/bin/bash
 
-echo "Please enter the YouTube URL:"
-read youtube_url
+# Variables
+VIDEO_URL="https://www.youtube.com/watch?v=bKwbFuqt528"
+TRANSCRIPT_FILE="transcript.en.srt"
+OUTPUT_FILE="output.txt"
 
-yt-dlp --skip-download --write-subs --write-auto-subs --sub-lang en --sub-format srt --output "transcript.%(ext)s" "$youtube_url" && \
-sed -e '/^[0-9][0-9]:[0-9][0-9]:[0-9][0-9],[0-9][0-9][0-9] --> [0-9][0-9]:[0-9][0-9]:[0-9][0-9],[0-9][0-9][0-9]$/d' \
--e '/^[[:digit:]]\+$/d' \
+# Download subtitles
+yt-dlp --skip-download --write-subs --write-auto-subs --sub-lang en \
+--sub-format ttml --convert-subs srt \
+--output "transcript.%(ext)s" "$VIDEO_URL" || exit 1
+
+# Check if the transcript file exists
+if [ ! -f "$TRANSCRIPT_FILE" ]; then
+    echo "Error: $TRANSCRIPT_FILE not found"
+    exit 1
+fi
+
+# Clean up subtitles
+sed -i.bak \
+-e '/^[0-9][0-9]:[0-9][0-9]:[0-9][0-9].[0-9][0-9][0-9] --> [0-9][0-9]:[0-9][0-9]:[0-9][0-9].[0-9][0-9][0-9]$/d' \
+-e '/^[[:digit:]]\{1,3\}$/d' \
 -e 's/<[^>]*>//g' \
 -e '/^[[:space:]]*$/d' \
--e ':a;N;$!ba;s/\n/ /g' \
-transcript.en.srt > output.txt && \
-rm transcript.en.srt
+"$TRANSCRIPT_FILE" || exit 1
 
-python topic_segment.py
+# Remove backup file created by sed
+rm "${TRANSCRIPT_FILE}.bak"
 
-echo "Processing complete. Segmented output saved in segmented_output.txt"
+# Create final output and remove intermediate file
+mv "$TRANSCRIPT_FILE" "$OUTPUT_FILE" || exit 1
+
+echo "Transcript successfully created in $OUTPUT_FILE"
